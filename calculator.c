@@ -1,76 +1,108 @@
 #include <stdio.h>
-#include <string.h>
+#include <float.h>
+#include <stdbool.h>
 
-int menustart ()
-{
-  printf("Choose one of the following operations\n");
-  printf("(1)Add \n");
-  printf("(2)Subtract\n");
-  printf("(3)Multiply\n");
-  printf("(4)Divide\n");
-  printf("(-1)Stop program\n");
-  scanf("Enter your choice: %d", choice);
-  return choice;
+void getOperands(double* firstOperand, double* secondOperand) {
+    printf("Please enter the first operand: ");
+    scanf("%lf", firstOperand);
+    printf("Please enter the second operand: ");
+    scanf("%lf", secondOperand);
 }
-
-double add(firstoperands, secondoperands){
-
-  return firstoperands + secondoperands;
-}
-double sub(firstoperands,secondoperands){
-
-  return firstoperands - secondoperands;
-}
-double mul(firstoperands,secondoperands){
-
-  return firstoperands * secondoperands;
-}
-double div(firstoperands, secondoperands){
-
-  return firstoperands / secondoperands;
-}
-
-void getOperands(double* firstoperands, double* secondoperands)
-{
-  printf("Please enter the first operand: ");
-  scanf("%lf \n", firstoperands);
-  printf("Please enter the second operand: ");
-  scanf("%lf \n", secondoperands);
-}
-
-void Check(int choice){
-
-  double result;
-  switch (choice) {
-    case 1:
-      getOperands(double* firstoperands, double* secondoperands);
-      result = add(&firstoperands , &secondoperands);
-    break;
-    case 2:
-      getOperands(double* firstoperands, double* secondoperands);
-      result = sub(&firstoperands , &secondoperands);
-    break;
-    case 3:
-      getOperands(double* firstoperands, double* secondoperands);
-      result = mul(&firstoperands , &secondoperands);
-    break;
-    case 4:
-      getOperands(double* firstoperands, double* secondoperands);
-      result = div(&firstoperands , &secondoperands);
-    break;
-    case -1:
-    break;
-    default:
-    printf("Error\n Enter your choice: ");
-    scanf("%d ",choice);
-    Check(choice);
+bool isInputValid(int operation) {
+  if (operation >= -1 && operation <= 4 && operation != 0) {
+    return true;
+  }
+  else{
+    return false;
   }
 }
+
+void userInput(int* operation) {
+  printf("Choose one of the following operations:\nAdd (1)\nSubtract (2)\nMultiply (3)\nDivide (4)\nStop program (-1)\n");
+  do {
+    printf("\nEnter your choice: ");
+    scanf("%d",operation);
+    if (!isInputValid(*operation)) {
+        printf("Input not allowed, try again!\n");
+    }
+  } while(!isInputValid(*operation));
+}
+
+void calculate(double* firstOperand, double* secondOperand, int* operation){
+  double result;
+  switch(*operation)
+  {
+    case 1:
+        if (*firstOperand + *secondOperand > DBL_MAX) {
+          printf("Number overflow\n");
+        }
+        else if (*firstOperand + *secondOperand < DBL_MIN) {
+          printf("Number underflow\n");
+        }
+        else {
+          result = *firstOperand + *secondOperand;
+          printf("Result: %g\n\n", result);
+        }
+        break;
+    case 2:
+    if (*firstOperand - *secondOperand > DBL_MAX) {
+      printf("Number overflow\n");
+    }
+    else if (*firstOperand - *secondOperand < DBL_MIN) {
+      printf("Number underflow\n");
+    }
+    else {
+      result = *firstOperand - *secondOperand;
+      printf("Result: %g\n\n", result);
+    }
+        break;
+    case 3:
+    if (*firstOperand * *secondOperand > DBL_MAX) {
+      printf("Number overflow\n");
+    }
+    else if (*firstOperand * *secondOperand < DBL_MIN) {
+      printf("Number underflow\n");
+    }
+    else {
+      result = *firstOperand * *secondOperand;
+      printf("Result: %g\n\n", result);
+    }
+        break;
+    case 4:
+        if (*secondOperand == 0) {
+          printf("Division by zero!\n");
+          return;
+        }
+        else {
+          if (*firstOperand / *secondOperand > DBL_MAX) {
+            printf("Number overflow\n");
+          }
+          else if (*firstOperand / *secondOperand < DBL_MIN) {
+            printf("Number underflow\n");
+          }
+          else {
+            result = *firstOperand / *secondOperand;
+            printf("Result: %g\n\n", result);
+          }
+        }
+        break;
+  }
+}
+
 int main(int argc, char const *argv[]) {
+  int operation;
+  double firstOperand;
+  double secondOperand;
+  printf("Simple calculator\n");
+  printf("=================\n\n");
+  do {
 
-  int choice = menustart();
-  double* firstoperands;double* secondoperands;
-  getOperands(firstoperands, secondoperands);
-
+    userInput(&operation);
+    if (operation == -1) {
+      break;
+    }
+    getOperands(&firstOperand, &secondOperand);
+    calculate(&firstOperand, &secondOperand, &operation);
+  } while(operation != -1);
   return 0;
 }
